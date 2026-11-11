@@ -54,6 +54,7 @@ python main.py
 - `Ridge`: regressão linear regularizada com todas as features.
 - `PhysicalRidge`: baseline físico que corrige a resistência medida por temperatura e SOC e ajusta uma regressão Ridge sobre termos polinomiais. Usa coeficientes exploratórios do simulador; serve como referência superior da relação R–SOH, não como modelo pronto para campo.
 - `RandomForest`, `SVR_RBF`, `HistGradientBoosting`, `XGBoost`, `LightGBM` e `MLP` com early stopping agrupado por bateria.
+- `CatBoost` e `K-Nearest Neighbors (KNN)`com três valores de k.
 
 
 ## Principais artefatos em `outputs/`
