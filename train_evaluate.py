@@ -31,6 +31,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
 
 from config import (
     CV_FOLDS,
@@ -295,6 +296,16 @@ def make_models(feature_cols, seed=SEED):
             )),
         ]),
     }
+    for k in (5, 15, 30):
+        models[f"KNN_k{k}"] = Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler()),
+            ("model", KNeighborsRegressor(
+                n_neighbors=k,
+                weights="distance",
+                n_jobs=-1,
+            )),
+        ])
 
     try:
         from xgboost import XGBRegressor
@@ -332,6 +343,24 @@ def make_models(feature_cols, seed=SEED):
     except ImportError:
         print("LightGBM não instalado; ignorando.")
 
+    try:
+        from catboost import CatBoostRegressor
+        models["CatBoost"] = Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("model", CatBoostRegressor(
+                iterations=500,
+                learning_rate=0.03,
+                depth=4,
+                l2_leaf_reg=5.0,
+                loss_function="RMSE",
+                random_seed=seed,
+                thread_count=-1,
+                verbose=0,
+                allow_writing_files=False,
+            )),
+        ])
+    except ImportError:
+        print("CatBoost não instalado; ignorando.")
     return models
 
 
